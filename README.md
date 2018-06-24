@@ -1,12 +1,16 @@
-# <img src="https://www.docker.com/sites/default/files/Whale%20Logo332_5.png" width="40" height="30"/> Dockerfor Angular CI (Gitlab)
+# ![Docker](https://raw.githubusercontent.com/kekel87/docker-angular-ci/master/docker.png) Docker for Angular CI (Gitlab)
+
+[![](https://images.microbadger.com/badges/image/kekel87/angular-ci.svg)](https://microbadger.com/images/kekel87/angular-ci "Get your own image badge on microbadger.com")
 
 Capability to run full ci of angular application :
-- install dependencies (yarn)
-- run karma and e2e tests (Chromium)
+- install dependencies (yarn or npm)
+- run unit tests (PhantomJS/Chrome/Firefox)
+- run e2e tests (PhantomJS/Chrome/Firefox)
 - build prod app
 - build docker image
 - deploy image
-- git
+- docker stuff
+- git stuff
 
 ### Gitlab CI :
 Use case :
@@ -14,32 +18,57 @@ Use case :
   - .gitlab-ci.yml `image: kekel87/angular-ci`
   - [services](http://doc.gitlab.com/ce/ci/yaml/README.html#image-and-services).
 
-### Karma :
-
-*ChromiumHeadless is available since karma-chrome-launcher@2.2.0 :*
+### Karma example config :
+```yml
+unit:
+  image: kekel87/angular-ci
+  stage: test
+  script:
+    - yarn
+    - yarn ng test --browsers ChromeHeadless --code-coverage --watch=false --progress=false
+  coverage: /Statements\s*:\s*([^%]+)/
+```
 ```javascript
 // karma.conf.js
-
-browsers: ['ChromiumNoSandbox'],
 customLaunchers: {
-  ChromiumNoSandbox: {
-    base: 'ChromiumHeadless',
-    flags: ['--no-sandbox']
+  ChromeHeadless: {
+    base: 'Chrome',
+    flags: [
+      '--headless',
+      '--disable-gpu',
+      '--remote-debugging-port=9222',
+      '--no-sandbox'
+    ]
   }
 },
 ```
 
-### Protrator : 
+### Protrator example config : 
+```yml
+e2e:
+  image: kekel87/angular-ci
+  stage: test
+  script:
+    - yarn  
+    - yarn ng e2e --protractor-config e2e/protractor-ci.conf.js
+```
 ```javascript
 // protrator-ci.conf.js
-  capabilities: [
-    'browserName': 'chrome',
-    'chromeOptions': {
-      'args': ['no-sandbox', 'headless', 'disable-gpu']
-    }
-  }],
-  chromeDriver: '/usr/bin/chromedriver',
+  multiCapabilities: [
+    {
+      browserName: 'firefox',
+      'moz:firefoxOptions': {
+        args: ['--headless'],
+      },
+    },
+    {
+      browserName: 'chrome',
+      chromeOptions: {
+        args: ['--no-sandbox', '--headless', '--disable-gpu'],
+      },
+    },
+  ],
 ```
 
 Thanks :
-- https://hub.docker.com/r/weboaks/node-karma-protractor-chrome/
+- https://hub.docker.com/r/atlassianlabs/docker-node-jdk-chrome-firefox/
