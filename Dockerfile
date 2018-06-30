@@ -1,30 +1,50 @@
 FROM node:8
 
 LABEL Maintainer="kekel87 <https://github.com/kekel87>" \
-    Description="Docker for Angular CI (with gitlab)."
+    Description="Docker for node CI (with gitlab)."
 
-# Install chrome
-RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+ARG FIREFOX_VERSION=57.0.2
+
+USER root
+
+# Required for Phantom JS && Firefox
+RUN apt-get update \
+    && apt-get install -y zip libdbus-glib-1-2 \
+    # Install chrome
+    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' > /etc/apt/sources.list.d/google-chrome.list \
     && apt-get update \
-    && apt-get install -y --no-install-recommends  google-chrome-stable
-
-ENV CHROME_BIN /usr/bin/google-chrome
-
-# Install firefox
-RUN wget -q -O - http://mozilla.debian.net/archive.asc | apt-key add - \
-    && echo 'deb http://http.debian.net/debian unstable main' > /etc/apt/sources.list.d/debian-mozilla.list \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends libc6-dev \
-    && apt-get install -y --no-install-recommends -t unstable firefox
-
-# Required for phantom 
-RUN apt-get install -y --no-install-recommends \
-    bzip2 \
-    zip
-
-# Clean up 
-RUN apt-get autoremove --purge -y \
+    && apt-get install -y --no-install-recommends dbus-x11 google-chrome-stable \
+    # Install Firefox
+    && wget --no-verbose -O /tmp/firefox.tar.bz2 https://download-installer.cdn.mozilla.net/pub/firefox/releases/$FIREFOX_VERSION/linux-x86_64/en-US/firefox-$FIREFOX_VERSION.tar.bz2 \
+    && tar -C /opt -xjf /tmp/firefox.tar.bz2 \
+    && rm /tmp/firefox.tar.bz2 \
+    && ln -fs /opt/firefox/firefox /usr/bin/firefox \
+    # Clean up 
+    && apt-get autoremove --purge -y \
     && apt-get clean \
     && apt-get autoclean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/locale/* /var/cache/debconf/*-old /usr/share/doc/*
+
+# versions of local tools
+# RUN node -v \
+#     && npm -v \
+#     && yarn -v \
+#     && google-chrome --version \
+#     && firefox --version \
+#     && zip --version \
+#     && git --version
+
+# "fake" dbus address to prevent errors
+# https://github.com/SeleniumHQ/docker-selenium/issues/87
+ENV DBUS_SESSION_BUS_ADDRESS=/dev/null
+
+# a few environment variables to make NPM installs easier
+# good colors for most applications
+ENV TERM xterm
+
+# avoid million NPM install messages
+ENV npm_config_loglevel warn
+
+# allow installing when the main user is root
+ENV npm_config_unsafe_perm true
