@@ -1,27 +1,24 @@
-# ![Docker](https://raw.githubusercontent.com/kekel87/docker-angular-ci/master/docker.png) Docker for Angular CI (Gitlab)
+# ![Docker](https://raw.githubusercontent.com/kekel87/readme-images/master/docker.png) Docker for node CI (Gitlab)
 
-[![](https://images.microbadger.com/badges/image/kekel87/angular-ci.svg)](https://microbadger.com/images/kekel87/angular-ci 'Get your own image badge on microbadger.com')
+![gitlab](https://raw.githubusercontent.com/kekel87/readme-images/master/gitlab.png) ![node](https://raw.githubusercontent.com/kekel87/readme-images/master/node.png) ![npm](https://raw.githubusercontent.com/kekel87/readme-images/master/npm.png) ![yarn](https://raw.githubusercontent.com/kekel87/readme-images/master/yarn.png) ![karma](https://raw.githubusercontent.com/kekel87/readme-images/master/karma.png) ![protractor](https://raw.githubusercontent.com/kekel87/readme-images/master/protractor.png) ![phantomjs](https://raw.githubusercontent.com/kekel87/readme-images/master/phantomjs.png) ![chrome](https://raw.githubusercontent.com/kekel87/readme-images/master/chrome.png) ![firefox](https://raw.githubusercontent.com/kekel87/readme-images/master/firefox.png)
 
-Capability to run full ci of angular application :
+[![](https://images.microbadger.com/badges/version/kekel87/node-chrome-firefox.svg)](https://microbadger.com/images/kekel87/node-chrome-firefox 'Get your own version badge on microbadger.com') [![](https://images.microbadger.com/badges/image/kekel87/node-chrome-firefox.svg)](https://microbadger.com/images/kekel87/node-chrome-firefox 'Get your own image badge on microbadger.com')
 
-- install dependencies (yarn or npm)
-- run unit tests (PhantomJS/Chrome/Firefox)
-- run e2e tests (PhantomJS/Chrome/Firefox)
-- git stuff
+Capability to run full CI of node application :
+
+- install dependencies
+- build
+- run unit tests
+- run e2e tests
 
 ### Gitlab CI :
 
-Use case :
-
-- gitlab-runner `--docker-image kekel87/angular-ci`
-- .gitlab-ci.yml `image: kekel87/angular-ci`
-- [services](http://doc.gitlab.com/ce/ci/yaml/README.html#image-and-services)
-
-### Karma example config :
+### Karma Gilab CI example config :
 
 ```yml
+# .gitlab-ci.yml
 unit:
-  image: kekel87/angular-ci
+  image: kekel87/node-chrome-firefox
   stage: test
   script:
     - yarn
@@ -44,19 +41,20 @@ customLaunchers: {
 },
 ```
 
-### Protrator example config :
+### Protrator Gilab CI example config :
 
 ```yml
+# .gitlab-ci.yml
 e2e:
-  image: kekel87/angular-ci
+  image: kekel87/node-chrome-firefox
   stage: test
   script:
     - yarn  
-    - yarn ng e2e --protractor-config e2e/protractor-ci.conf.js
+    - yarn ng e2e --protractor-config e2e/protractor-headless.conf.js
 ```
 
 ```javascript
-// protrator-ci.conf.js
+// protrator-headless.conf.js
   multiCapabilities: [
     {
       browserName: 'firefox',
