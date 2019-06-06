@@ -1,20 +1,17 @@
-FROM node:8
+FROM node:12
 
 LABEL Maintainer="kekel87 <https://github.com/kekel87>" \
     Description="Docker for node CI (with gitlab)."
 
-ARG FIREFOX_VERSION=57.0.2
+ARG FIREFOX_VERSION=67.0
 
 USER root
-
-# Required for Phantom JS && Firefox
-RUN apt-get update \
-    && apt-get install -y zip libdbus-glib-1-2 \
     # Install chrome
-    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' > /etc/apt/sources.list.d/google-chrome.list \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends dbus-x11 google-chrome-stable \
+    && apt-get update -qqy \
+    # Required for Firefox
+    && apt-get install -qqy --no-install-recommends dbus-x11 google-chrome-stable zip libdbus-glib-1-2 \
     # Install Firefox
     && wget --no-verbose -O /tmp/firefox.tar.bz2 https://download-installer.cdn.mozilla.net/pub/firefox/releases/$FIREFOX_VERSION/linux-x86_64/en-US/firefox-$FIREFOX_VERSION.tar.bz2 \
     && tar -C /opt -xjf /tmp/firefox.tar.bz2 \

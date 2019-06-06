@@ -37,7 +37,11 @@ customLaunchers: {
       '--remote-debugging-port=9222',
       '--no-sandbox'
     ]
-  }
+  },
+  FirefoxHeadless: {
+    base: 'Firefox',
+    flags: ['-headless'],
+  },
 },
 ```
 
@@ -70,3 +74,26 @@ e2e:
     },
   ],
 ```
+
+How i test it locally :
+```bash
+# build
+docker build -t kekel87/node-chrome-firefox .
+# enter to docker image
+docker run -it --rm --name test -v $MY_ANGULAR_APP$:/app kekel87/node-chrome-firefox sh
+cd app
+# install project
+yarn
+# run lint, unit tests and e2e tests
+yarn ng lint --type-check
+yarn ng test --browsers ChromeHeadless --watch=false
+yarn ng test --browsers FirefoxHeadless --watch=false
+yarn e2e --configuration headless
+# test a prod build
+yarn ng build --prod --progress=false
+# serve project with angular-http-server to validate build
+angular-http-server --path .\dist\
+```
+
+
+docker run -it --rm --name test -v C:/Users/Kekel87/dev/collections_test:/app kekel/node-chrome-firefox sh
