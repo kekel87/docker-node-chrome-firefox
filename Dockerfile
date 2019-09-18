@@ -3,7 +3,7 @@ FROM node:12
 LABEL Maintainer="kekel87 <https://github.com/kekel87>" \
     Description="Docker for node CI (with gitlab)."
 
-ARG FIREFOX_VERSION=67.0
+ARG FIREFOX_VERSION=69.0
 
 USER root
     # Install chrome
@@ -29,7 +29,6 @@ RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key
 #     && yarn -v \
 #     && google-chrome --version \
 #     && firefox --version \
-#     && zip --version \
 #     && git --version
 
 # "fake" dbus address to prevent errors

@@ -8,8 +8,8 @@ Capability to run full CI of node application :
 
 - install dependencies
 - build
-- run unit tests
-- run e2e tests
+- run unit tests on chrome & firefox
+- run e2e tests on chrome & firefox
 
 ### Gitlab CI :
 
@@ -75,6 +75,20 @@ e2e:
   ],
 ```
 
+#### Chrome 77 web-driver issue
+
+```json
+# add fixed version tp package.json
+{
+  ...
+  ,
+  "resolutions": {
+    "protractor/webdriver-manager": "12.1.7"
+  }
+}
+```
+
+
 How i test it locally :
 ```bash
 # build
@@ -94,6 +108,3 @@ yarn ng build --prod --progress=false
 # serve project with angular-http-server to validate build
 angular-http-server --path .\dist\
 ```
-
-
-docker run -it --rm --name test -v C:/Users/Kekel87/dev/collections_test:/app kekel/node-chrome-firefox sh
