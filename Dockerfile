@@ -1,21 +1,26 @@
-FROM node:12
+FROM node:lts
 
 LABEL Maintainer="kekel87 <https://github.com/kekel87>" \
     Description="Docker for node CI (with gitlab)."
 
-ARG FIREFOX_VERSION=69.0
+ARG FIREFOX_VERSION=latest
+ARG CHROME_VERSION="google-chrome-stable"
 
 USER root
-    # Install chrome
+
+# Install chrome
 RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
     && echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' > /etc/apt/sources.list.d/google-chrome.list \
     && apt-get update -qqy \
+    && apt-get install -qqy --no-install-recommends dbus-x11 libdbus-glib-1-2 ${CHROME_VERSION:-google-chrome-stable} \
     # Required for Firefox
-    && apt-get install -qqy --no-install-recommends dbus-x11 google-chrome-stable zip libdbus-glib-1-2 \
+    && apt-get install -qqy --no-install-recommends zip libavcodec-extra \
     # Install Firefox
-    && wget --no-verbose -O /tmp/firefox.tar.bz2 https://download-installer.cdn.mozilla.net/pub/firefox/releases/$FIREFOX_VERSION/linux-x86_64/en-US/firefox-$FIREFOX_VERSION.tar.bz2 \
+    && FIREFOX_DOWNLOAD_URL=$(if [ $FIREFOX_VERSION = "latest" ] || [ $FIREFOX_VERSION = "nightly-latest" ] || [ $FIREFOX_VERSION = "devedition-latest" ] || [ $FIREFOX_VERSION = "esr-latest" ]; then echo "https://download.mozilla.org/?product=firefox-$FIREFOX_VERSION-ssl&os=linux64&lang=en-US"; else echo "https://download-installer.cdn.mozilla.net/pub/firefox/releases/$FIREFOX_VERSION/linux-x86_64/en-US/firefox-$FIREFOX_VERSION.tar.bz2"; fi) \
+    && wget --no-verbose -O /tmp/firefox.tar.bz2 $FIREFOX_DOWNLOAD_URL \
+    && apt-get -y purge firefox \
+    && rm -rf /opt/firefox \
     && tar -C /opt -xjf /tmp/firefox.tar.bz2 \
-    && rm /tmp/firefox.tar.bz2 \
     && ln -fs /opt/firefox/firefox /usr/bin/firefox \
     # Clean up 
     && apt-get autoremove --purge -y \

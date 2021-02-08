@@ -2,7 +2,7 @@
 
 ![gitlab](https://raw.githubusercontent.com/kekel87/readme-images/master/gitlab.png) ![node](https://raw.githubusercontent.com/kekel87/readme-images/master/node.png) ![npm](https://raw.githubusercontent.com/kekel87/readme-images/master/npm.png) ![yarn](https://raw.githubusercontent.com/kekel87/readme-images/master/yarn.png) ![karma](https://raw.githubusercontent.com/kekel87/readme-images/master/karma.png) ![protractor](https://raw.githubusercontent.com/kekel87/readme-images/master/protractor.png) ![phantomjs](https://raw.githubusercontent.com/kekel87/readme-images/master/phantomjs.png) ![chrome](https://raw.githubusercontent.com/kekel87/readme-images/master/chrome.png) ![firefox](https://raw.githubusercontent.com/kekel87/readme-images/master/firefox.png)
 
-[![](https://images.microbadger.com/badges/version/kekel87/node-chrome-firefox.svg)](https://microbadger.com/images/kekel87/node-chrome-firefox 'Get your own version badge on microbadger.com') [![](https://images.microbadger.com/badges/image/kekel87/node-chrome-firefox.svg)](https://microbadger.com/images/kekel87/node-chrome-firefox 'Get your own image badge on microbadger.com')
+[![](https://images.microbadger.com/badges/version/kekel87/node-chrome-firefox.svg)](https://microbadger.com/images/kekel87/node-chrome-firefox "Get your own version badge on microbadger.com") [![](https://images.microbadger.com/badges/image/kekel87/node-chrome-firefox.svg)](https://microbadger.com/images/kekel87/node-chrome-firefox "Get your own image badge on microbadger.com")
 
 Capability to run full CI of node application :
 
@@ -53,7 +53,7 @@ e2e:
   image: kekel87/node-chrome-firefox
   stage: test
   script:
-    - yarn  
+    - yarn
     - yarn ng e2e --protractor-config e2e/protractor-headless.conf.js
 ```
 
@@ -75,21 +75,8 @@ e2e:
   ],
 ```
 
-#### Chrome 77 web-driver issue
-
-```json
-# add fixed version tp package.json
-{
-  ...
-  ,
-  "resolutions": {
-    "protractor/webdriver-manager": "12.1.7"
-  }
-}
-```
-
-
 How i test it locally :
+
 ```bash
 # build
 docker build -t kekel87/node-chrome-firefox .
